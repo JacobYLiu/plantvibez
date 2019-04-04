@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:plant_vibez/pages/HomePage.dart';
+import 'package:plant_vibez/root_page.dart';
 import 'package:plant_vibez/auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -63,14 +63,14 @@ class _LoginPageState extends State<LoginPage> {
           FirebaseUser user = await widget.auth.signInWithEmailAndPassword(_email, _password);
           String userId = user.uid;
           print('Signed in: $userId');
-//          if(!user.isEmailVerified) {
-//            setNotification("Email has not been verified");
-//          }else{
-//            Navigator.push(
-//              context,
-//              MaterialPageRoute(builder: (context) => HomePage(widget.camera, user)),
-//            );
-//          }
+          if(!user.isEmailVerified) {
+            setNotification("Email has not been verified");
+          }else{
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RootPage(widget.auth)),
+            );
+          }
         }else{
           FirebaseUser user = await widget.auth.createUserWithEmailAndPassword(_email,_password)
               .then((FirebaseUser user){
@@ -159,5 +159,6 @@ class _LoginPageState extends State<LoginPage> {
       this._notification = '';
     });
   }
+
 
 }

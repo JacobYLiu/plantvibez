@@ -13,27 +13,27 @@
           "package_name": "pipeline.sbcc.edu.plant_vibez"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "53542897903-t430c5qmo4qifkou8v0uvbclm3459e0f.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDliAGFB0-LUegrmyj-naM5qLHk_xqElII"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53542897903-t430c5qmo4qifkou8v0uvbclm3459e0f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "53542897903-20h5mc5jv2bujctf0g2p6gv4phh5dkp2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "pipeline.sbcc.edu.plant_vibez"
+              }
+            }
+          ]
         }
       }
     }

@@ -104,12 +104,12 @@ class HomePage extends StatelessWidget {
             ListTile(
               leading: new Icon(Icons.add_box),
               title: Text('AddPlantPage'),
-//              onTap: (){
-//                Navigator.push(
-//                  context,
-//                  MaterialPageRoute(builder: (context) => AddPlantPage()),
-//                );
-//              }
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddPlantPage()),
+                );
+              }
               ),
             ListTile(
               leading: new Icon(Icons.info),
