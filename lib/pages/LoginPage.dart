@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   FormType _formType = FormType.login;
   String _notification = '';
 
+
   final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 
 
@@ -43,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void moveToRegister(){
     formKey.currentState.reset();
+    resetNotification();
     setState(() {
       _formType = FormType.register;
     });
@@ -50,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void moveToLogin(){
     formKey.currentState.reset();
+    resetNotification();
     setState(() {
       _formType = FormType.login;
     });
@@ -87,19 +90,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Widget _showBody(){
+    return new Form(
+        key: formKey,
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: buildInputs() + buildSubmitButton(),
+        ));
+  }
+
+
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
           title: Text("Login"),
           backgroundColor: Colors.lightGreen,
         ),
-        body: new Container(
-            child: new Form(
-              key: formKey,
-                child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: buildInputs() + buildSubmitButton(),
-                ))));
+        body: Stack(
+          children: <Widget>[
+            _showBody(),
+          ],
+        ));
   }
 
   List<Widget> buildInputs(){
