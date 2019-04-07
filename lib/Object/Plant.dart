@@ -1,11 +1,11 @@
-class Plant{
+class DefaultPlant{
   String imageLink;
   String name;
 
   DateTime waterTime;
   DateTime lightTime;
 
-  Plant(String imageLink, String name){
+  DefaultPlant(String imageLink, String name){
     this.imageLink = imageLink;
     this.name = name;
   }

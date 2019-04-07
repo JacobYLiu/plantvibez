@@ -22,6 +22,9 @@ class Auth implements BaseAuth{
 
   Future<FirebaseUser> createUserWithEmailAndPassword(String email, String password) async{
     FirebaseUser user = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+    print(user.email);
+    print(user.uid.toString());
+    createBasicInfo(user);
     return user;
   }
 
@@ -34,12 +37,13 @@ class Auth implements BaseAuth{
     await firebaseAuth.signOut();
   }
 
-//  void createBasicInfo (FirebaseUser user){
-//    print('Creating basic user info...');
-//    databaseReference.child('users').child(user.uid).set({
-//      'email' : user.email,
-//      'UID' : user.uid,
-//    });
-//  }
+  void createBasicInfo (FirebaseUser user){
+    FirebaseUser thisUser = user;
+    print('Creating basic user info...');
+    databaseReference.child('users').child(thisUser.uid.toString()).set({
+      'email' : thisUser.email,
+      'UID' : thisUser.uid.toString(),
+    });
+  }
 
 }

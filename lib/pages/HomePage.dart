@@ -5,11 +5,12 @@ import 'package:plant_vibez/pages/Information.dart';
 import 'package:plant_vibez/Object/Plant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_vibez/auth.dart';
-
+import 'package:plant_vibez/pages/Help.dart';
+import 'package:plant_vibez/pages/PlantList.dart';
 
 
 //generate default Plant Object
-List<Plant> generate(){
+List<DefaultPlant> generate(){
   final links = [
     "images/houseplants.jpg",
     "images/mushroom.jpg",
@@ -19,42 +20,77 @@ List<Plant> generate(){
 
   final text = ["houseplants", "mushroom", "succulent", "flowers"];
   final itemCount = 4;
-  final List<Plant> plants = new List();
+  final List<DefaultPlant> plants = new List();
 
   for (int i = 0; i < itemCount; i++) {
-    plants.add(new Plant(links[i], text[i]));
+    plants.add(new DefaultPlant(links[i], text[i]));
   }
 
   return plants;
 }
 
-class HomePage extends StatelessWidget {
-  FirebaseUser user;
-//  final CameraDescription cameras;
+class HomePage extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignedOut;
 
+  HomePage(this.auth,this.onSignedOut);
+
+  @override
+  State<StatefulWidget> createState() => _HomePageState();
+
+}
+
+//AboutText
+Widget _buildAboutText(BuildContext context) {
+  return new AlertDialog(
+    title: Text("About"),
+    content: new Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text("Plant_Vibez_Demov v1.0 \n"),
+        Text(
+            "By Ben Pallan, Shane Valderama, Stephen Gutierrez, Jacob Liu, Nhan Le "),
+      ],
+    ),
+  );
+}
+
+class _HomePageState extends State<HomePage>{
+
+  FirebaseUser user;
+  String email;
+  String uid;
+
+  void getUser(){
+    widget.auth.currentUser().then((FirebaseUser user){
+      setState(() {
+        this.user = user;
+        this.email = user.email;
+        this.uid = user.uid;
+      });
+    });
+  }
+
   void _signedOut() async{
     try{
-      await auth.signOut();
-      onSignedOut();
+      await widget.auth.signOut();
+      widget.onSignedOut();
     }catch(e){
       print(e);
     }
   }
 
-  List<Plant> plants = generate();
-
-
-  HomePage(this.auth,this.onSignedOut);
+  List<DefaultPlant> plants = generate();
 
   @override
   Widget build(BuildContext context) {
     generate();
+    getUser();
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
-        title: Text("Plant_Vibez_demo"),
+        title: Text("Your plants"),
         backgroundColor: Colors.lightGreen,
       ),
       body: Center(
@@ -92,6 +128,26 @@ class HomePage extends StatelessWidget {
               ),
             ),
             ListTile(
+              leading: new Icon(Icons.help),
+              title: Text('Help'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Help()),
+                );
+              },
+            ),
+            ListTile(
+              leading: new Icon(Icons.list),
+              title: Text('Plant List'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => JsonPlantList()),
+                );
+              },
+            ),
+            ListTile(
               leading: new Icon(Icons.settings),
               title: Text('Setting'),
               onTap: () {
@@ -102,15 +158,15 @@ class HomePage extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: new Icon(Icons.add_box),
-              title: Text('AddPlantPage'),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddPlantPage()),
-                );
-              }
-              ),
+                leading: new Icon(Icons.add_box),
+                title: Text('AddPlantPage'),
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddPlantPage()),
+                  );
+                }
+            ),
             ListTile(
               leading: new Icon(Icons.info),
               title: Text('About'),
@@ -132,20 +188,4 @@ class HomePage extends StatelessWidget {
     );
   }
 
-}
-
-//AboutText
-Widget _buildAboutText(BuildContext context) {
-  return new AlertDialog(
-    title: Text("About"),
-    content: new Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text("Plant_Vibez_Demov v1.0 \n"),
-        Text(
-            "By Ben Pallan, Shane Valderama, Stephen Gutierrez, Jacob Liu, Nhan Le "),
-      ],
-    ),
-  );
 }
