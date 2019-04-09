@@ -5,7 +5,6 @@ import 'package:plant_vibez/pages/Information.dart';
 import 'package:plant_vibez/Object/Plant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_vibez/auth.dart';
-import 'package:plant_vibez/pages/Help.dart';
 import 'package:plant_vibez/pages/PlantList.dart';
 
 
@@ -128,22 +127,12 @@ class _HomePageState extends State<HomePage>{
               ),
             ),
             ListTile(
-              leading: new Icon(Icons.help),
-              title: Text('Help'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Help()),
-                );
-              },
-            ),
-            ListTile(
               leading: new Icon(Icons.list),
               title: Text('Plant List'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => JsonPlantList()),
+                  MaterialPageRoute(builder: (context) => PlantListHelp()),
                 );
               },
             ),
