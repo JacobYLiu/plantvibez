@@ -30,7 +30,6 @@ class _PlantListHelpState extends State<PlantListHelp> {
   // controls the text label we use as a search bar
   FirebaseDatabaseUtil _getUtil(){
     fbUtil = new FirebaseDatabaseUtil(widget.uid);
-    return fbUtil;
   }
 
   FirebaseDatabaseUtil fbUtil;
@@ -44,6 +43,7 @@ class _PlantListHelpState extends State<PlantListHelp> {
 
   @override
   Widget build(BuildContext context) {
+    _getUtil();
     _getNames();
     return MaterialApp(
       home: Scaffold(
@@ -163,7 +163,7 @@ class _PlantListHelpState extends State<PlantListHelp> {
   }
 
   _addPlant(Plant plant) {
-    _getUtil().insertRecord(plant);
+    fbUtil.insertRecord(plant);
   }
 }
 
