@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:plant_vibez/Object/Plant.dart';
+import 'package:plant_vibez/util/FireBaseDataBaseUtil.dart';
 
 class PlantListHelp extends StatefulWidget {
+  final String uid;
+
+  const PlantListHelp({Key key, this.uid}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _PlantListHelpState();
 }
@@ -22,6 +28,12 @@ class _PlantListHelpState extends State<PlantListHelp> {
   }
 
   // controls the text label we use as a search bar
+  FirebaseDatabaseUtil _getUtil(){
+    fbUtil = new FirebaseDatabaseUtil(widget.uid);
+    return fbUtil;
+  }
+
+  FirebaseDatabaseUtil fbUtil;
   final TextEditingController _filter = new TextEditingController();
   final dio = new Dio(); // for http requests
   String _searchText = "";
@@ -39,7 +51,9 @@ class _PlantListHelpState extends State<PlantListHelp> {
             backgroundColor: Colors.lightGreen,
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios),
-              onPressed: (){ Navigator.pop(context);},
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
             title: _appBarTitle,
             actions: <Widget>[
@@ -77,8 +91,11 @@ class _PlantListHelpState extends State<PlantListHelp> {
       List tempList = new List();
       for (int i = 0; i < _filterPlants.length; i++) {
         if (_filterPlants[i]['name']
-            .toLowerCase()
-            .contains(_searchText.toLowerCase())) {
+                .toLowerCase()
+                .contains(_searchText.toLowerCase()) ||
+            _filterPlants[i]['species']
+                .toLowerCase()
+                .contains(_searchText.toLowerCase())) {
           tempList.add(_filterPlants[i]);
         }
       }
@@ -87,20 +104,43 @@ class _PlantListHelpState extends State<PlantListHelp> {
     return ListView.builder(
       itemCount: plants == null ? 0 : _filterPlants.length,
       itemBuilder: (BuildContext context, int index) {
-        String title = _filterPlants[index]['name'];
+        Plant thisPlant = new Plant(
+            _filterPlants[index]['name'], _filterPlants[index]['species']);
         //Replace all white spaces with + character for searching
-        String urlTitle =  title.replaceAll(new RegExp(' '), '+');
+        String urlTitle = thisPlant.name.replaceAll(new RegExp(' '), '+');
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: new ListTile(
-            title: Text(title),
-            onTap: () async {
-              final url = "https://www.google.com/search?q=${urlTitle}";
-              print(url);
-              if (await canLaunch(url)) {
-                launch(url);
-              }
-            },
+          child: new ExpansionTile(
+            leading: Icon(
+              Icons.book,
+              color: Colors.lightGreen,
+            ),
+            title: Text(
+              thisPlant.name,
+              style: TextStyle(color: Colors.black),
+            ),
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('Add Plant'),
+                    color: Colors.lightGreen,
+                    onPressed: () => _addPlant(thisPlant),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.launch),
+                    onPressed: () async {
+                      final url = "https://www.google.com/search?q=${urlTitle}";
+                      print(url);
+                      if (await canLaunch(url)) {
+                        launch(url);
+                      }
+                    },
+                  ),
+                ],
+              )
+            ],
           ),
         );
       },
@@ -120,6 +160,10 @@ class _PlantListHelpState extends State<PlantListHelp> {
         });
       }
     });
+  }
+
+  _addPlant(Plant plant) {
+    _getUtil().insertRecord(plant);
   }
 }
 

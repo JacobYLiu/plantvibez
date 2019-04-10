@@ -9,7 +9,7 @@ import 'package:plant_vibez/pages/PlantList.dart';
 
 
 //generate default Plant Object
-List<DefaultPlant> generate(){
+List<Plant> generate(){
   final links = [
     "images/houseplants.jpg",
     "images/mushroom.jpg",
@@ -19,10 +19,12 @@ List<DefaultPlant> generate(){
 
   final text = ["houseplants", "mushroom", "succulent", "flowers"];
   final itemCount = 4;
-  final List<DefaultPlant> plants = new List();
+  final List<Plant> plants = new List();
 
   for (int i = 0; i < itemCount; i++) {
-    plants.add(new DefaultPlant(links[i], text[i]));
+    Plant plant = new Plant(text[i], text[i]);
+    plant.imageLink = links[i];
+    plants.add(plant);
   }
 
   return plants;
@@ -56,16 +58,11 @@ Widget _buildAboutText(BuildContext context) {
 }
 
 class _HomePageState extends State<HomePage>{
-
-  FirebaseUser user;
-  String email;
   String uid;
 
   void getUser(){
     widget.auth.currentUser().then((FirebaseUser user){
       setState(() {
-        this.user = user;
-        this.email = user.email;
         this.uid = user.uid;
       });
     });
@@ -80,7 +77,7 @@ class _HomePageState extends State<HomePage>{
     }
   }
 
-  List<DefaultPlant> plants = generate();
+  List<Plant> plants = generate();
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +129,7 @@ class _HomePageState extends State<HomePage>{
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PlantListHelp()),
+                  MaterialPageRoute(builder: (context) => PlantListHelp(uid: this.uid,)),
                 );
               },
             ),

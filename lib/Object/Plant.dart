@@ -1,13 +1,13 @@
-class DefaultPlant{
+class Plant{
   String imageLink;
   String name;
-
+  String species;
   DateTime waterTime;
   DateTime lightTime;
 
-  DefaultPlant(String imageLink, String name){
-    this.imageLink = imageLink;
+  Plant(String name, String species){
     this.name = name;
+    this.species = species;
   }
 
   DateTime get wTime => waterTime;
