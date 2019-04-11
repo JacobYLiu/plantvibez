@@ -9,17 +9,24 @@ class FirebaseDatabaseUtil {
 
   FirebaseDatabaseUtil(this.uid);
 
-  void insertRecord(Plant plant){
-    databaseReference.child('users').child(uid).child('plant').child(plant.name).set({
+  insertRecord(Plant plant){
+    databaseReference.child('plants').child(uid).child(plant.name).set({
       'name' : plant.name,
       'species': plant.species,
     });
+
   }
 
-  void getRecord(){}
+  void getRecord(String uid){
+//    databaseReference.child('user').child(uid).child('plant').once().then();
+  }
 
   void updateRecord(){}
 
   void deleteRecord(){}
+
+  DatabaseReference getdbRef(){
+    return databaseReference;
+  }
 
 }

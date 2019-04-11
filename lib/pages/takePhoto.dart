@@ -4,7 +4,7 @@ import 'package:plant_vibez/Camera.dart';
 
 // AddPlant Page
 
-class AddPlantPage extends StatelessWidget {
+class takePhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

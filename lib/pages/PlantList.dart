@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:plant_vibez/Object/Plant.dart';
 import 'package:plant_vibez/util/FireBaseDataBaseUtil.dart';
+import 'package:plant_vibez/pages/PlantDescription.dart';
 
 class PlantListHelp extends StatefulWidget {
   final String uid;
@@ -28,7 +29,7 @@ class _PlantListHelpState extends State<PlantListHelp> {
   }
 
   // controls the text label we use as a search bar
-  FirebaseDatabaseUtil _getUtil(){
+  FirebaseDatabaseUtil _getUtil() {
     fbUtil = new FirebaseDatabaseUtil(widget.uid);
   }
 
@@ -40,6 +41,7 @@ class _PlantListHelpState extends State<PlantListHelp> {
   List _filterPlants = new List(); // names filtered by search text
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle = new Text('Search Plants');
+  Widget snackBar;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class _PlantListHelpState extends State<PlantListHelp> {
                     _searchPressed();
                   })
             ]),
-        body: _buildList(),
+        body: Builder(builder: (context) => _buildList()),
       ),
     );
   }
@@ -104,8 +106,8 @@ class _PlantListHelpState extends State<PlantListHelp> {
     return ListView.builder(
       itemCount: plants == null ? 0 : _filterPlants.length,
       itemBuilder: (BuildContext context, int index) {
-        Plant thisPlant = new Plant(
-            _filterPlants[index]['name'], _filterPlants[index]['species']);
+        Plant thisPlant = new Plant(null, _filterPlants[index]['name'],
+            _filterPlants[index]['species'], '', '');
         //Replace all white spaces with + character for searching
         String urlTitle = thisPlant.name.replaceAll(new RegExp(' '), '+');
         return Padding(
@@ -126,7 +128,12 @@ class _PlantListHelpState extends State<PlantListHelp> {
                   RaisedButton(
                     child: Text('Add Plant'),
                     color: Colors.lightGreen,
-                    onPressed: () => _addPlant(thisPlant),
+                    onPressed: (){
+                      Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => PlantDescription(thisPlant, widget.uid))
+                      );
+                    },
                   ),
                   IconButton(
                     icon: Icon(Icons.launch),
@@ -160,10 +167,6 @@ class _PlantListHelpState extends State<PlantListHelp> {
         });
       }
     });
-  }
-
-  _addPlant(Plant plant) {
-    fbUtil.insertRecord(plant);
   }
 }
 

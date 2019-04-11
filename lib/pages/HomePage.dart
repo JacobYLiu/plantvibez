@@ -1,15 +1,20 @@
+import 'dart:convert';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:plant_vibez/pages/AddPlant.dart';
-import 'package:plant_vibez/pages/Settings.dart';
+import 'package:plant_vibez/pages/takePhoto.dart';
+import 'package:plant_vibez/pages/PlantDescription.dart';
 import 'package:plant_vibez/pages/Information.dart';
 import 'package:plant_vibez/Object/Plant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_vibez/auth.dart';
 import 'package:plant_vibez/pages/PlantList.dart';
+import 'package:plant_vibez/pages/userPlantView.dart';
+import 'package:plant_vibez/util/FireBaseDataBaseUtil.dart';
 
 
 //generate default Plant Object
-List<Plant> generate(){
+List<Plant> generate() {
   final links = [
     "images/houseplants.jpg",
     "images/mushroom.jpg",
@@ -22,7 +27,7 @@ List<Plant> generate(){
   final List<Plant> plants = new List();
 
   for (int i = 0; i < itemCount; i++) {
-    Plant plant = new Plant(text[i], text[i]);
+    Plant plant = new Plant(null, text[i], text[i], '', '');
     plant.imageLink = links[i];
     plants.add(plant);
   }
@@ -34,7 +39,7 @@ class HomePage extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignedOut;
 
-  HomePage(this.auth,this.onSignedOut);
+  HomePage(this.auth, this.onSignedOut);
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -57,22 +62,22 @@ Widget _buildAboutText(BuildContext context) {
   );
 }
 
-class _HomePageState extends State<HomePage>{
+class _HomePageState extends State<HomePage> {
   String uid;
 
-  void getUser(){
-    widget.auth.currentUser().then((FirebaseUser user){
+  void getUser() {
+    widget.auth.currentUser().then((FirebaseUser user) {
       setState(() {
         this.uid = user.uid;
       });
     });
   }
 
-  void _signedOut() async{
-    try{
+  void _signedOut() async {
+    try {
       await widget.auth.signOut();
       widget.onSignedOut();
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
@@ -89,28 +94,7 @@ class _HomePageState extends State<HomePage>{
         title: Text("Your plants"),
         backgroundColor: Colors.lightGreen,
       ),
-      body: Center(
-        child: ListView.builder(
-          itemCount: plants.length,
-          itemBuilder: (context, position) {
-            return Container(
-              padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(plants[position].imageLink),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Information(plant: plants[position])),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
+      body: _showDefaultList(plants),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -125,31 +109,32 @@ class _HomePageState extends State<HomePage>{
             ),
             ListTile(
               leading: new Icon(Icons.list),
-              title: Text('Plant List'),
+              title: Text('Browse Plants'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PlantListHelp(uid: this.uid,)),
+                  MaterialPageRoute(
+                      builder: (context) => PlantListHelp(uid: this.uid,)),
                 );
               },
             ),
             ListTile(
-              leading: new Icon(Icons.settings),
-              title: Text('Setting'),
+              leading: new Icon(Icons.person_pin),
+              title: Text('Your Plants'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingPage()),
+                  MaterialPageRoute(builder: (context) => PlantListView(uid: this.uid,)),
                 );
               },
             ),
             ListTile(
                 leading: new Icon(Icons.add_box),
-                title: Text('AddPlantPage'),
-                onTap: (){
+                title: Text('Take Picture'),
+                onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddPlantPage()),
+                    MaterialPageRoute(builder: (context) => takePhoto()),
                   );
                 }
             ),
@@ -169,9 +154,43 @@ class _HomePageState extends State<HomePage>{
               onTap: _signedOut,
             ),
           ],
-        ),
-      ),
+        ),)
+      ,
     );
   }
 
+  Widget _showList() {
+    DatabaseReference dbRef = FirebaseDatabase.instance.reference();
+    dbRef.child('users').child(this.uid).child('plant').once().then((
+        DataSnapshot snap) {
+      String jsonString = json.encode(snap.value);
+    });
+
+    return CircularProgressIndicator();
+  }
+
+  Widget _showDefaultList(List<Plant> plants) {
+    return Center(
+      child: ListView.builder(
+        itemCount: plants.length,
+        itemBuilder: (context, position) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            child: RaisedButton(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(plants[position].imageLink),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Information(plant: plants[position])),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

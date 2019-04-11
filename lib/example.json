@@ -1,33 +1,26 @@
 {
-  users: {
-    Iuuya27UuXb2QqHa2M3Qa2818XV2: {
-      UID: Iuuya27UuXb2QqHa2M3Qa2818XV2,
-      email: abyssalnova805@gmail.com
-    },
-    KPzF2v5qooOTygMQkshKkGctGb83: {
-      UID: KPzF2v5qooOTygMQkshKkGctGb83,
-      email: test123@gmail.com
-    },
-    OBtTnHZB2cg5FrNGdhQBxzSa08z1: {
-      UID: OBtTnHZB2cg5FrNGdhQBxzSa08z1,
-      email: ntle1@pipeline.sbcc.edu
-    },
-    s9AfSippXGTk3R7zsMMNGjK5tsi1: {
-      UID: s9AfSippXGTk3R7zsMMNGjK5tsi1,
-      plant: {
-        Alder: {
-          species: Alnus,
-          name: Alder
-        },
-        Common
-        alder: {
-          species: Alnus
-          glutinosa,
-          name: Common
-          alder
-        }
-      },
-      email: nhan99dn@gmail.com
-    }
+  "Dindle": {
+    "species": "Sonchus arvensis",
+    "name": "Dindle"
+  },
+  "Common alder": {
+    "species": "Alnus glutinosa",
+    "name": "Common alder"
+  },
+  "False alder": {
+    "species": "Ilex verticillata",
+    "name": "False alder"
+  },
+  "Gray alder": {
+    "species": "Alnus incana",
+    "name": "Gray alder"
+  },
+  "White alder": {
+    "species": "Alnus incana, Ilex verticillata",
+    "name": "White alder"
+  },
+  "Speckled alder": {
+    "species": "Alnus incana",
+    "name": "Speckled alder"
   }
 }
