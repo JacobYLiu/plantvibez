@@ -13,7 +13,6 @@ class _CameraAppState extends State<CameraApp> {
   takePicture() async {
     print('Picker is called');
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
-//    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (img != null) {
       image = img;
       setState(() {});
@@ -23,31 +22,29 @@ class _CameraAppState extends State<CameraApp> {
   pickPicture() async {
     print('Picker is called');
     File img = await ImagePicker.pickImage(source: ImageSource.gallery);
-//    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (img != null) {
       image = img;
       setState(() {});
     }
   }
-  Widget _uploadImage(){
+
+  Widget _uploadImage() {
     return new Container(
-        child: new Column(
-            children: <Widget>[
-        new Image.file(image),
-              new RaisedButton(
-                onPressed: _upload,
-                child: Text('Upload'),
-                textColor: Colors.black,
-                color: Colors.lightGreen,
-              ),
-    ],
-    ),
+      child: new Column(
+        children: <Widget>[
+          new Image.file(image),
+          new RaisedButton(
+            onPressed: _upload,
+            child: Text('Upload'),
+            textColor: Colors.black,
+            color: Colors.lightGreen,
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _upload(){
-
-  }
+  Widget _upload() {}
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +56,9 @@ class _CameraAppState extends State<CameraApp> {
           ),
           body: new Container(
             child: new Center(
-              child: image == null
-                  ? new Text('No Image to Show ')
-                  : _uploadImage()
-            ),
+                child: image == null
+                    ? new Text('No Image to Show ')
+                    : _uploadImage()),
           ),
           floatingActionButton: Column(
             children: <Widget>[
@@ -81,8 +77,7 @@ class _CameraAppState extends State<CameraApp> {
             ],
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
-          )
-      ),
+          )),
     );
   }
 }
