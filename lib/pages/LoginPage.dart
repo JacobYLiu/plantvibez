@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_vibez/root_page.dart';
 import 'package:plant_vibez/auth.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoginPage extends StatefulWidget {
   final BaseAuth auth;
@@ -75,12 +76,14 @@ class _LoginPageState extends State<LoginPage> {
             user.sendEmailVerification();
           });
           print('Registered user : ${user.uid}');
+          setNotification('Registerred successfully!!');
         }
         widget.onSignedIn();
       } catch (e) {
-        setNotification(
-            "Email or password has not been registerred or wrongly typed");
-        print('Error: $e');
+        if (e.runtimeType.toString() == 'PlatformException') {
+          setNotification(e.toString());
+        }
+        print('Error: ' + e.toString());
       }
     }
   }
@@ -99,34 +102,59 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           children: <Widget>[
             SafeArea(
-              child: ListView(
-//                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[SizedBox(height: 20.0,),
-                    Image.asset('images/background.jpg', height: MediaQuery.of(context).size.height/1.8,), _showBody(),],
+                child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 35.0),
+              children: <Widget>[
+                SizedBox(height: 50.0,),
+                SizedBox(
+                  height: 200.0,
+                  child: Image.asset(
+                    "images/login_image.png",
+                    fit: BoxFit.contain,
                   ),
-                ],
-              )
-            ),
+                ),
+                _showBody(),
+              ],
+            )),
           ],
         ));
   }
 
   List<Widget> buildInputs() {
     return [
+      SizedBox(
+        height: 20.0,
+      ),
       TextFormField(
-        decoration: new InputDecoration(labelText: 'Email'),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+            hintText: 'abc@gmail.com',
+            prefixIcon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 0.0),
+              child: Icon(Icons.email),
+            )),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (value) => _email = value,
       ),
       SizedBox(height: 12.0),
       TextFormField(
-        decoration: new InputDecoration(labelText: 'Password'),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+            prefixIcon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 0.0),
+              child: Icon(Icons.security),
+            ),
+            hintText: 'At least 6 characters'),
         validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
         obscureText: true,
         onSaved: (value) => _password = value,
+      ),
+      SizedBox(
+        height: 12.0,
       ),
     ];
   }
@@ -134,19 +162,38 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> buildSubmitButton() {
     if (_formType == FormType.login) {
       return [
-        new RaisedButton(
-          child: new Text(
-            'Login',
-            style: TextStyle(fontSize: 20.0),
+        Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: Color(0xff01A0C7),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            onPressed: validateAndSubmit,
+            child: Text("Login",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
-          onPressed: validateAndSubmit,
         ),
-        new FlatButton(
+        SizedBox(
+          height: 12.0,
+        ),
+        Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: Color(0xff95c4fe),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: moveToRegister,
-            child: new Text(
-              'Create Account',
-              style: new TextStyle(fontSize: 20.0),
-            )),
+            child: Text("Create Account",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ),
+        SizedBox(height: 20.0,),
         new Text(
           _notification,
           style: TextStyle(color: Colors.red),
@@ -154,19 +201,38 @@ class _LoginPageState extends State<LoginPage> {
       ];
     } else {
       return [
-        new RaisedButton(
-          child: new Text(
-            'Create an account',
-            style: TextStyle(fontSize: 20.0),
+        Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: Color(0xff01A0C7),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            onPressed: validateAndSubmit,
+            child: Text("Create an account",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
-          onPressed: validateAndSubmit,
         ),
-        new FlatButton(
+        SizedBox(
+          height: 12.0,
+        ),
+        Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: Color(0xff95c4fe),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: moveToLogin,
-            child: new Text(
-              'Have an account? Login',
-              style: new TextStyle(fontSize: 20.0),
-            )),
+            child: Text("Have an account? Login!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ),
+        SizedBox(height: 20.0,),
         new Text(_notification, style: TextStyle(color: Colors.red)),
       ];
     }

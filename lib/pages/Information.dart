@@ -5,7 +5,7 @@ import 'package:plant_vibez/Object/Plant.dart';
 
 class Information extends StatelessWidget {
 
-  final DefaultPlant plant;
+  final Plant plant;
 
   Information({Key key, @required this.plant}) : super(key: key);
 

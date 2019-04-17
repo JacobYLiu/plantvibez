@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:plant_vibez/pages/AddPlant.dart';
-import 'package:plant_vibez/pages/Settings.dart';
+import 'package:plant_vibez/pages/takePhoto.dart';
 import 'package:plant_vibez/pages/Information.dart';
 import 'package:plant_vibez/Object/Plant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plant_vibez/auth.dart';
 import 'package:plant_vibez/pages/PlantList.dart';
+import 'package:plant_vibez/pages/userPlantView.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 //generate default Plant Object
-List<DefaultPlant> generate(){
+List<Plant> generate() {
   final links = [
     "images/houseplants.jpg",
     "images/mushroom.jpg",
@@ -19,10 +20,12 @@ List<DefaultPlant> generate(){
 
   final text = ["houseplants", "mushroom", "succulent", "flowers"];
   final itemCount = 4;
-  final List<DefaultPlant> plants = new List();
+  final List<Plant> plants = new List();
 
   for (int i = 0; i < itemCount; i++) {
-    plants.add(new DefaultPlant(links[i], text[i]));
+    Plant plant = new Plant(null, text[i], text[i], '', '');
+    plant.imageLink = links[i];
+    plants.add(plant);
   }
 
   return plants;
@@ -32,7 +35,7 @@ class HomePage extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignedOut;
 
-  HomePage(this.auth,this.onSignedOut);
+  HomePage(this.auth, this.onSignedOut);
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -55,35 +58,49 @@ Widget _buildAboutText(BuildContext context) {
   );
 }
 
-class _HomePageState extends State<HomePage>{
+class _HomePageState extends State<HomePage> {
 
-  FirebaseUser user;
-  String email;
   String uid;
+  String userEmail;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  bool showNotification = true;
 
-  void getUser(){
-    widget.auth.currentUser().then((FirebaseUser user){
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('images/background.jpg');
+    var ios = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(
+        initSettings, onSelectNotification: null );
+  }
+
+  void getUser() {
+    widget.auth.currentUser().then((FirebaseUser user) {
       setState(() {
-        this.user = user;
-        this.email = user.email;
         this.uid = user.uid;
+        this.userEmail = user.email;
       });
     });
   }
 
-  void _signedOut() async{
-    try{
+  void _signedOut() async {
+    try {
       await widget.auth.signOut();
       widget.onSignedOut();
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
 
-  List<DefaultPlant> plants = generate();
+  List<Plant> plants = generate();
 
   @override
   Widget build(BuildContext context) {
+    _showDefaultNotification();
     generate();
     getUser();
     return Scaffold(
@@ -92,28 +109,7 @@ class _HomePageState extends State<HomePage>{
         title: Text("Your plants"),
         backgroundColor: Colors.lightGreen,
       ),
-      body: Center(
-        child: ListView.builder(
-          itemCount: plants.length,
-          itemBuilder: (context, position) {
-            return Container(
-              padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(plants[position].imageLink),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Information(plant: plants[position])),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
+      body: _showDefaultList(plants),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -128,31 +124,33 @@ class _HomePageState extends State<HomePage>{
             ),
             ListTile(
               leading: new Icon(Icons.list),
-              title: Text('Plant List'),
+              title: Text('Browse Plants'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PlantListHelp()),
+                  MaterialPageRoute(
+                      builder: (context) => PlantListHelp(uid: this.uid,)),
                 );
               },
             ),
             ListTile(
-              leading: new Icon(Icons.settings),
-              title: Text('Setting'),
+              leading: new Icon(Icons.person_pin),
+              title: Text('Your Plants'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingPage()),
+                  MaterialPageRoute(
+                      builder: (context) => PlantListView(uid: this.uid,)),
                 );
               },
             ),
             ListTile(
                 leading: new Icon(Icons.add_box),
-                title: Text('AddPlantPage'),
-                onTap: (){
+                title: Text('Take Picture'),
+                onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddPlantPage()),
+                    MaterialPageRoute(builder: (context) => takePhoto()),
                   );
                 }
             ),
@@ -172,9 +170,54 @@ class _HomePageState extends State<HomePage>{
               onTap: _signedOut,
             ),
           ],
-        ),
-      ),
+        ),)
+      ,
+
     );
   }
 
+  Widget _showDefaultList(List<Plant> plants) {
+    return Center(
+      child: ListView.builder(
+        itemCount: plants.length,
+        itemBuilder: (context, position) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            child: RaisedButton(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(plants[position].imageLink),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Information(plant: plants[position])),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+  
+   _showDefaultNotification() async {
+    if(showNotification){
+      var android = new AndroidNotificationDetails(
+          'id', 'plantvibez', 'For your plants',
+          importance: Importance.Max, priority: Priority.High);
+      var ios = new IOSNotificationDetails();
+      var platform = new NotificationDetails(
+          android, ios);
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        'Greeting',
+          (TimeOfDay.now().hour > TimeOfDay(hour: 12, minute: 0).hour) ?  'Good Aftertoon ' + userEmail : 'Good morning ' + userEmail,
+        platform,
+        payload: 'Default_Sound',
+      );
+      showNotification = false;
+    }
+
+  }
 }

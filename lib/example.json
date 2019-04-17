@@ -1,0 +1,26 @@
+{
+  "Dindle": {
+    "species": "Sonchus arvensis",
+    "name": "Dindle"
+  },
+  "Common alder": {
+    "species": "Alnus glutinosa",
+    "name": "Common alder"
+  },
+  "False alder": {
+    "species": "Ilex verticillata",
+    "name": "False alder"
+  },
+  "Gray alder": {
+    "species": "Alnus incana",
+    "name": "Gray alder"
+  },
+  "White alder": {
+    "species": "Alnus incana, Ilex verticillata",
+    "name": "White alder"
+  },
+  "Speckled alder": {
+    "species": "Alnus incana",
+    "name": "Speckled alder"
+  }
+}
