@@ -60,24 +60,23 @@ Widget _buildAboutText(BuildContext context) {
 
 class _HomePageState extends State<HomePage> {
 
-  initState() {
-    super.initState();
-    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    // If you have skipped STEP 3 then change app_icon to @mipmap/ic_launcher
-    var initializationSettingsAndroid =
-    new AndroidInitializationSettings('background');
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: null);
-  }
-
   String uid;
   String userEmail;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool showNotification = true;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('images/background.jpg');
+    var ios = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(
+        initSettings, onSelectNotification: null );
+  }
 
   void getUser() {
     widget.auth.currentUser().then((FirebaseUser user) {
@@ -202,22 +201,23 @@ class _HomePageState extends State<HomePage> {
     );
   }
   
-  Future _showDefaultNotification() async {
+   _showDefaultNotification() async {
     if(showNotification){
-      var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      var android = new AndroidNotificationDetails(
           'id', 'plantvibez', 'For your plants',
           importance: Importance.Max, priority: Priority.High);
-      var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-      var platformChannelSpecifics = new NotificationDetails(
-          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      var ios = new IOSNotificationDetails();
+      var platform = new NotificationDetails(
+          android, ios);
       await flutterLocalNotificationsPlugin.show(
         0,
         'Greeting',
           (TimeOfDay.now().hour > TimeOfDay(hour: 12, minute: 0).hour) ?  'Good Aftertoon ' + userEmail : 'Good morning ' + userEmail,
-        platformChannelSpecifics,
+        platform,
         payload: 'Default_Sound',
       );
+      showNotification = false;
     }
-    showNotification = false;
+
   }
 }
