@@ -5,29 +5,21 @@ class Plant{
   String imageLink;
   String name;
   String species;
-  DateTime waterTime;
-  DateTime lightTime;
+  String waterTime;
+  String lightTime;
 
   Plant(String id, String name, String species, String waterTime, String lightTime){
     this.id = id;
     this.name = name;
     this.species = species;
-    if(waterTime == ''){
-      this.waterTime = DateTime.parse("2012-02-27 13:27:00");
-    }else{
-      this.waterTime = DateTime.parse(waterTime);
-    }
-    if(lightTime == ''){
-      this.lightTime = DateTime.parse("2012-02-27 13:27:00");
-    }else{
-      this.lightTime = DateTime.parse(lightTime);
-    }
+    this.waterTime = waterTime;
+    this.lightTime = lightTime;
   }
 
-  DateTime get wTime => waterTime;
-  DateTime get lTime => lightTime;
-  set wTime(DateTime waterTime) => waterTime = waterTime;
-  set lTime(DateTime lightTime) => lightTime = lightTime;
+  String get getWaterTime => waterTime;
+  String get getLightTime => lightTime;
+  set setWaterTime(String time) => waterTime = time;
+  set setLightTime(String time) => lightTime = time;
 
   factory Plant.fromJson(Map<String, dynamic> json) {
     return Plant(
@@ -51,8 +43,9 @@ class Plant{
     id = snapshot.key;
     name = snapshot.value['name'];
     species = snapshot.value['species'];
-    waterTime = DateTime.parse(snapshot.value['waterTime']);
-    lightTime = DateTime.parse(snapshot.value['lightTime']);
-
+    waterTime = snapshot.value['waterTime'];
+    lightTime = snapshot.value['lightTime'];
   }
+
+
 }
