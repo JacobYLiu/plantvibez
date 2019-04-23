@@ -4,6 +4,21 @@ import 'package:plant_vibez/root_page.dart';
 import 'package:plant_vibez/auth.dart';
 import 'package:flutter/cupertino.dart';
 
+
+class EmailFieldValidator {
+  static String validate(String value) {
+    return value.isEmpty ? 'Email can\'t be empty' : null;
+  }
+}
+
+class PasswordFieldValidator {
+  static String validate(String value) {
+    return value.isEmpty ? 'Password can\'t be empty' : null;
+  }
+}
+
+
+
 class LoginPage extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignedIn;
